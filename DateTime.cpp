@@ -3,8 +3,7 @@
 
 DateTime origin();
 
-DateTime::DateTime()
-{
+DateTime::DateTime() {
   _year = 2000;
   _month = 1;
   _day = 1;
@@ -14,8 +13,7 @@ DateTime::DateTime()
   _millisecond = 0;
 }
 
-DateTime::DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond)
-{
+DateTime::DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond) {
   _year = year;
   _month = month;
   _day = day;
@@ -25,8 +23,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
   _millisecond = millisecond;
 }
 
-DateTime::DateTime(char* date, char* time)
-{
+DateTime::DateTime(char* date, char* time) {
   _year = 2000 + parse(date + 4, 2);
   _month = parse(date + 2, 2);
   _day = parse(date, 2);
@@ -34,66 +31,53 @@ DateTime::DateTime(char* date, char* time)
   _minute = parse(time + 2, 2);
   _second = parse(time + 4, 2);
   _millisecond = parse(time + 7, 3);
-
 }
 
-int DateTime::year() const
-{
+int DateTime::year() const {
   return _year;
 }
 
-int DateTime::month() const
-{
+int DateTime::month() const {
   return _month;
 }
 
-int DateTime::day() const
-{
+int DateTime::day() const {
   return _day;
 }
 
-int DateTime::hour() const
-{
+int DateTime::hour() const {
   return _hour;
 }
 
-int DateTime::minute() const
-{
+int DateTime::minute() const {
   return _minute;
 }
 
-int DateTime::second() const
-{
+int DateTime::second() const {
   return _second;
 }
 
-int DateTime::millisecond() const
-{
+int DateTime::millisecond() const {
   return _millisecond;
 }
 
-int DateTime::hourTens() const
-{
+int DateTime::hourTens() const {
   return _hour/10;
 }
 
-int DateTime::hourUnits() const
-{
+int DateTime::hourUnits() const {
   return _hour%10;
 }
 
-int DateTime::minuteTens() const
-{
+int DateTime::minuteTens() const {
   return _minute/10;
 }
 
-int DateTime::minuteUnits() const
-{
+int DateTime::minuteUnits() const {
   return _minute%10;
 }
 
-void DateTime::print() const
-{
+void DateTime::print() const {
   Serial.print(year());
   Serial.print('-');
   if (month() < 10) Serial.print('0');
@@ -118,103 +102,83 @@ void DateTime::print() const
   printDayOfWeek();
 }
 
-void DateTime::add(int interval, Period period)
-{
+void DateTime::add(int interval, Period period) {
   // Should accept a positive or negative interval for any period.
-  if (period == Millisecond)
-  {
+  if (period == Millisecond) {
     int magnitude = this->millisecond() + interval;
     interval = magnitude / 1000;
     _millisecond = magnitude % 1000;
-    if (this->millisecond() < 0)
-    {
+    if (this->millisecond() < 0) {
       _millisecond += 1000;
       interval -= 1;
     }
     if (interval != 0) period = Second;
   }
-  if (period == Second)
-  {
+  if (period == Second) {
     int magnitude = this->second() + interval;
     interval = magnitude / 60;
     _second = magnitude % 60;
-    if (this->second() < 0)
-    {
+    if (this->second() < 0) {
       _second += 60;
       interval -= 1;
     }
     if (interval != 0) period = Minute;
   }
-  if (period == Minute)
-  {
+  if (period == Minute) {
     int magnitude = this->minute() + interval;
     interval = magnitude / 60;
     _minute = magnitude % 60;
-    if (this->minute() < 0)
-    {
+    if (this->minute() < 0) {
       _minute += 60;
       interval -= 1;
     }
     if (interval != 0) period = Hour;
   }
-  if (period == Hour)
-  {
+  if (period == Hour) {
     int magnitude = this->hour() + interval;
     interval = magnitude / 24;
     _hour = magnitude % 24;
-    if (this->hour() < 0)
-    {
+    if (this->hour() < 0) {
       _hour += 24;
       interval -= 1;
     }
     if (interval != 0) period = Day;
   }
-  if (period == Day)
-  {
-    while(interval)
-    {
+  if (period == Day) {
+    while(interval) {
       int magnitude = this->day() + interval;
       int daysInMonth = this->daysInMonth();
-      if (magnitude > daysInMonth)
-      {
+      if (magnitude > daysInMonth) {
         _day = 1;
         add(1, DateTime::Month);
         interval = magnitude - daysInMonth - 1;
-      }
-      else if (magnitude < 1)
-      {
+      } else if (magnitude < 1) {
         int tempDay = day();
         _day = 1;
         add(-1, DateTime::Month);
         _day = this->daysInMonth();
         interval = interval + tempDay;
-      }
-      else
-      {
+      } else {
         _day += interval;
         interval = 0;
       }
     }
   }
-  if (period == Month)
-  {
+  if (period == Month) {
     int magnitude = this->month() + interval;
     interval = magnitude / 12;
     _month = magnitude % 12;
     if (!_month) _month = 12;
     if (interval != 0) period = Year;
   }
-  if (period == Year)
-  {
+  if (period == Year) {
     _year += interval;
   }
 }
 
-int DateTime::daysInMonth()
-{
+int DateTime::daysInMonth() {
   // http://en.wikipedia.org/wiki/Month
-  switch (month())
-  {
+  switch (month()) {
     case 1:
       return 31;
       break;
@@ -254,25 +218,21 @@ int DateTime::daysInMonth()
   }
 }
 
-int DateTime::parse(char* number, int characters)
-{
+int DateTime::parse(char* number, int characters) {
   int result = 0;
   int index = characters;
-  for (int index = 0; index < characters; index++)
-  {
+  for (int index = 0; index < characters; index++) {
     result *= 10;
     result += parse(*(number + index));
   }
   return result;
 }
 
-int DateTime::parse(char number)
-{
+int DateTime::parse(char number) {
   return number - 48;
 }
 
-boolean DateTime::isEarlierThan(const DateTime &other) const
-{
+boolean DateTime::isEarlierThan(const DateTime &other) const {
   if (this->year() < other.year()) return true;
   if (this->year() > other.year()) return false;
   if (this->month() < other.month()) return true;
@@ -290,8 +250,7 @@ boolean DateTime::isEarlierThan(const DateTime &other) const
   return false;
 }
 
-boolean DateTime::isEqualTo(const DateTime &other) const
-{
+boolean DateTime::isEqualTo(const DateTime &other) const {
   return (this->year() == other.year() &&
           this->month() == other.month() &&
           this->day() == other.day() &&
@@ -301,33 +260,27 @@ boolean DateTime::isEqualTo(const DateTime &other) const
           this->millisecond() == other.millisecond());
 }
 
-boolean DateTime::operator == (const DateTime &other) const
-{
+boolean DateTime::operator == (const DateTime &other) const {
   return this->isEqualTo(other);
 }
 
-boolean DateTime::operator < (const DateTime &other) const
-{
+boolean DateTime::operator < (const DateTime &other) const {
   return this->isEarlierThan(other);
 }
 
-boolean DateTime::operator <= (const DateTime &other) const
-{
+boolean DateTime::operator <= (const DateTime &other) const {
   return this->isEarlierThan(other) || this->isEqualTo(other);
 }
 
-boolean DateTime::operator > (const DateTime &other) const
-{
+boolean DateTime::operator > (const DateTime &other) const {
   return other.isEarlierThan(*this);
 }
 
-boolean DateTime::operator >= (const DateTime &other) const
-{
+boolean DateTime::operator >= (const DateTime &other) const {
   return other.isEarlierThan(*this) || other.isEqualTo(*this);
 }
 
-DateTime DateTime::toLocal()
-{
+DateTime DateTime::toLocal() {
   DateTime local(*this);
   DateTime dstStart;
   DateTime dstEnd;
@@ -339,15 +292,13 @@ DateTime DateTime::toLocal()
   return local;
 }
 
-boolean DateTime::isLeapYear() const
-{
+boolean DateTime::isLeapYear() const {
   //http://en.wikipedia.org/wiki/Leap_year
   int year = this->year();
   return (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
 }
 
-void DateTime::getDaylightSavingsDates(DateTime forDate, DateTime &utcStartDate, DateTime &utcEndDate)
-{
+void DateTime::getDaylightSavingsDates(DateTime forDate, DateTime &utcStartDate, DateTime &utcEndDate) {
   //http://www.nsw.gov.au/daylight-saving
   int year = forDate.year();
   utcStartDate = DateTime(year, 10, 1, 16, 0, 0, 0);
@@ -362,8 +313,7 @@ void DateTime::getDaylightSavingsDates(DateTime forDate, DateTime &utcStartDate,
     utcEndDate.add(6 - utcEndDate.dayOfWeek(), DateTime::Day);
 }
 
-DateTime::DayOfWeek DateTime::dayOfWeek() const
-{
+DateTime::DayOfWeek DateTime::dayOfWeek() const {
   //http://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week
   // Calculating only for the 2000-2099 century
   int century = 6;
@@ -376,8 +326,7 @@ DateTime::DayOfWeek DateTime::dayOfWeek() const
   return (DateTime::DayOfWeek)(sum % 7);
 }
 
-boolean DateTime::isApproximatelyEqualTo(const DateTime &other) const
-{
+boolean DateTime::isApproximatelyEqualTo(const DateTime &other) const {
   // The goal is to judge if two DateTimes are close, within seconds.
   // If one date were one millisecond to midnight before new year's eve,
   // and the other date were the stroke of midnight, you still couldn't
@@ -385,13 +334,10 @@ boolean DateTime::isApproximatelyEqualTo(const DateTime &other) const
   DateTime alpha;
   DateTime alphaOne;
   DateTime omega;
-  if (this->isEarlierThan(other))
-  {
+  if (this->isEarlierThan(other)) {
     alpha = (*this);
     omega = other;
-  }
-  else
-  {
+  } else {
     alpha = other;
     omega = (*this);
   }
@@ -408,8 +354,7 @@ boolean DateTime::isApproximatelyEqualTo(const DateTime &other) const
     return true;
 }
 
-unsigned long DateTime::totalMilliseconds() const
-{
+unsigned long DateTime::totalMilliseconds() const {
   unsigned long result = 0;
   result += millisecond();
   result += second() * 1000UL;
@@ -418,8 +363,7 @@ unsigned long DateTime::totalMilliseconds() const
   return result;
 }
 
-void DateTime::printDayOfWeek() const
-{
+void DateTime::printDayOfWeek() const {
   switch (this->dayOfWeek())
   {
     case DateTime::Sunday:
@@ -444,4 +388,28 @@ void DateTime::printDayOfWeek() const
       Serial.print("Saturday");
       break;
   }
+}
+
+String& DateTime::toString() {
+  //http://arduino.cc/en/Reference/StringObject
+  static String* output;
+  if (output) delete(output);
+  output = new String();
+  if (_day < 10) *output += '0';
+  *output += _day;
+  *output += '/';
+  if (_month < 10) *output += '0';
+  *output += _month;
+  *output += '/';
+  *output += _year;
+  *output += ' ';
+  if (_hour < 10) *output += '0';
+  *output += _hour;
+  *output += ':';
+  if (_minute < 10) *output += '0';
+  *output += _minute;
+  *output += ':';
+  if (_second < 10) *output += '0';
+  *output += _second;
+  return *output;
 }
