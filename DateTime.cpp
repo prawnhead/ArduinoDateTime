@@ -378,7 +378,7 @@ DateTime::DayOfWeek DateTime::dayOfWeek() const
 
 boolean DateTime::isApproximatelyEqualTo(const DateTime &other) const
 {
-  // The goal is to judge if two DateTimes are clos, within seconds.
+  // The goal is to judge if two DateTimes are close, within seconds.
   // If one date were one millisecond to midnight before new year's eve,
   // and the other date were the stroke of midnight, you still couldn't
   // even use years to tell how close two DateTimes are.

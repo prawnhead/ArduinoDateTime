@@ -9,6 +9,8 @@ class DateTime
     int _year, _month, _day, _hour, _minute, _second, _millisecond;
     int parse(char number);
     int parse(char* number, int characters);
+    String* currentString;  // current toString() value, can be updated by interrupt handler
+    String* previousString; // previous toString() value. Prevents deletion of previous string during use.
 
   public:
     enum Period { Year, Month, Day, Hour, Minute, Second, Millisecond };
