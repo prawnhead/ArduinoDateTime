@@ -9,6 +9,7 @@ void setup() {
   Serial.println("Test create any DateTime");
   DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
   testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
+
   Serial.println("Test add every interval");
   test.add(1, DateTime::Millisecond);
   testDateTime(test, 2000, 1, 1, 1, 1, 1, 2);
@@ -24,7 +25,8 @@ void setup() {
   testDateTime(test, 2000, 2, 2, 2, 2, 2, 2);
   test.add(1, DateTime::Year);
   testDateTime(test, 2001, 2, 2, 2, 2, 2, 2);
-  Serial.println("Test rollovers");
+
+  Serial.println("Test interval rollovers");
   test = DateTime(2000, 1, 1, 0, 0, 0, 999);        // millisecond -> seconds
   test.add(1, DateTime::Millisecond);               // rollover
   testDateTime(test, 2000, 1, 1, 0, 0, 1, 0);
@@ -60,6 +62,118 @@ void setup() {
   testDateTime(test, 2001, 1, 1, 0, 0, 0, 0);
   test.add(-1, DateTime::Month);                    // rollback
   testDateTime(test, 2000, 12, 1, 0, 0, 0, 0);
+
+  Serial.println("Test month rollovers");           // Also tests cascades millis -> seconds -> minutes ...
+
+  test = DateTime(2000, 1, 31, 23, 59, 59, 999);    // January -> February
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 2, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 1, 31, 23, 59, 59, 999);
+
+  test = DateTime(2000, 2, 29, 23, 59, 59, 999);    // February -> March (leap year)
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 3, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 2, 29, 23, 59, 59, 999);
+
+  test = DateTime(2001, 2, 28, 23, 59, 59, 999);    // February -> March (non leap year)
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2001, 3, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2001, 2, 28, 23, 59, 59, 999);
+
+  test = DateTime(2000, 3, 31, 23, 59, 59, 999);    // March -> April
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 4, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 3, 31, 23, 59, 59, 999);
+
+  test = DateTime(2000, 4, 30, 23, 59, 59, 999);    // April -> May
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 5, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 4, 30, 23, 59, 59, 999);
+
+  test = DateTime(2000, 5, 31, 23, 59, 59, 999);    // May -> June
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 6, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 5, 31, 23, 59, 59, 999);
+
+  test = DateTime(2000, 6, 30, 23, 59, 59, 999);    // June -> July
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 7, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 6, 30, 23, 59, 59, 999);
+
+  test = DateTime(2000, 7, 31, 23, 59, 59, 999);    // July -> August
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 8, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 7, 31, 23, 59, 59, 999);
+
+  test = DateTime(2000, 8, 31, 23, 59, 59, 999);    // August -> September
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 9, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 8, 31, 23, 59, 59, 999);
+
+  test = DateTime(2000, 9, 30, 23, 59, 59, 999);    // September -> October
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 10, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 9, 30, 23, 59, 59, 999);
+
+  test = DateTime(2000, 10, 31, 23, 59, 59, 999);    // October -> November
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 11, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 10, 31, 23, 59, 59, 999);
+
+  test = DateTime(2000, 11, 30, 23, 59, 59, 999);    // November -> December
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2000, 12, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 11, 30, 23, 59, 59, 999);
+
+  test = DateTime(2000, 12, 31, 23, 59, 59, 999);    // December -> January
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 2001, 1, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 2000, 12, 31, 23, 59, 59, 999);
+
+  Serial.println("Test leap years");
+  
+  test = DateTime(1999, 2, 28, 23, 59, 59, 999);    // Not a leap year
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 1999, 3, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 1999, 2, 28, 23, 59, 59, 999);
+
+  test = DateTime(1996, 2, 28, 23, 59, 59, 999);    // Leap year divisible by 4
+  test.add(1, DateTime::Millisecond);               // rollover 28 -> 29
+  testDateTime(test, 1996, 2, 29, 0, 0, 0, 0);
+  test = DateTime(1996, 2, 29, 23, 59, 59, 999);
+  test.add(1, DateTime::Millisecond);               // rollover 29 -> 1
+  testDateTime(test, 1996, 3, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);               // rollback 1 -> 29
+  testDateTime(test, 1996, 2, 29, 23, 59, 59, 999);
+
+  test = DateTime(1900, 2, 28, 23, 59, 59, 999);    // Not a leap year divisible by 100
+  test.add(1, DateTime::Millisecond);               // rollover
+  testDateTime(test, 1900, 3, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);              // rollback
+  testDateTime(test, 1900, 2, 28, 23, 59, 59, 999);
+
+  test = DateTime(2000, 2, 28, 23, 59, 59, 999);    // Leap year divisible by 400
+  test.add(1, DateTime::Millisecond);               // rollover 28 -> 29
+  testDateTime(test, 2000, 2, 29, 0, 0, 0, 0);
+  test = DateTime(2000, 2, 29, 23, 59, 59, 999);
+  test.add(1, DateTime::Millisecond);               // rollover 29 -> 1
+  testDateTime(test, 2000, 3, 1, 0, 0, 0, 0);
+  test.add(-1, DateTime::Millisecond);               // rollback 1 -> 29
+  testDateTime(test, 2000, 2, 29, 23, 59, 59, 999);
 
   printTestResults();
 }

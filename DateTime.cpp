@@ -170,7 +170,7 @@ void DateTime::add(int interval, Period period) {
     _month = magnitude % 12;
     if (!_month) {
       _month = 12;
-      interval -= 1;
+      interval--;
     }
     if (interval != 0) period = Year;
   }
