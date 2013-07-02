@@ -165,15 +165,16 @@ void DateTime::add(int interval, Period period) {
     }
   }
   if (period == Month) {
-    int magnitude = this->month() + interval;
+    int magnitude = this->month() + interval;  // 1 -1 = 0
     interval = magnitude / 12;
     _month = magnitude % 12;
-    if (!_month) _month = 12;
+    if (!_month) {
+      _month = 12;
+      interval -= 1;
+    }
     if (interval != 0) period = Year;
   }
-  if (period == Year) {
-    _year += interval;
-  }
+  if (period == Year) _year += interval;
 }
 
 int DateTime::daysInMonth() {
@@ -411,5 +412,9 @@ String& DateTime::toString() {
   *output += ':';
   if (_second < 10) *output += '0';
   *output += _second;
+  *output += '.';
+  if (_millisecond < 100) *output += '0';
+  if (_millisecond < 10) *output += '0';
+  *output += _millisecond;
   return *output;
 }
