@@ -5,7 +5,7 @@ int fails = 0;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("setup()");
+  Serial.println("This sketch tests the included DateTime class (Arduino library).");
   Serial.println("Test create any DateTime");
   DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
   testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
@@ -57,7 +57,7 @@ void setup() {
   test.add(-1, DateTime::Day);                      // rollback
   testDateTime(test, 2000, 1, 31, 0, 0, 0, 0);
 
-  test = DateTime(2000, 12, 1, 0, 0, 0, 0);        // months -> years
+  test = DateTime(2000, 12, 1, 0, 0, 0, 0);         // months -> years
   test.add(1, DateTime::Month);                     // rollover
   testDateTime(test, 2001, 1, 1, 0, 0, 0, 0);
   test.add(-1, DateTime::Month);                    // rollback
@@ -126,51 +126,51 @@ void setup() {
   testDateTime(test, 2000, 9, 30, 23, 59, 59, 999);
 
   test = DateTime(2000, 10, 31, 23, 59, 59, 999);    // October -> November
-  test.add(1, DateTime::Millisecond);               // rollover
+  test.add(1, DateTime::Millisecond);                // rollover
   testDateTime(test, 2000, 11, 1, 0, 0, 0, 0);
-  test.add(-1, DateTime::Millisecond);              // rollback
+  test.add(-1, DateTime::Millisecond);               // rollback
   testDateTime(test, 2000, 10, 31, 23, 59, 59, 999);
 
   test = DateTime(2000, 11, 30, 23, 59, 59, 999);    // November -> December
-  test.add(1, DateTime::Millisecond);               // rollover
+  test.add(1, DateTime::Millisecond);                // rollover
   testDateTime(test, 2000, 12, 1, 0, 0, 0, 0);
-  test.add(-1, DateTime::Millisecond);              // rollback
+  test.add(-1, DateTime::Millisecond);               // rollback
   testDateTime(test, 2000, 11, 30, 23, 59, 59, 999);
 
   test = DateTime(2000, 12, 31, 23, 59, 59, 999);    // December -> January
-  test.add(1, DateTime::Millisecond);               // rollover
+  test.add(1, DateTime::Millisecond);                // rollover
   testDateTime(test, 2001, 1, 1, 0, 0, 0, 0);
-  test.add(-1, DateTime::Millisecond);              // rollback
+  test.add(-1, DateTime::Millisecond);               // rollback
   testDateTime(test, 2000, 12, 31, 23, 59, 59, 999);
 
   Serial.println("Test leap years");
   
-  test = DateTime(1999, 2, 28, 23, 59, 59, 999);    // Not a leap year
-  test.add(1, DateTime::Millisecond);               // rollover
+  test = DateTime(1999, 2, 28, 23, 59, 59, 999);     // Not a leap year
+  test.add(1, DateTime::Millisecond);                // rollover
   testDateTime(test, 1999, 3, 1, 0, 0, 0, 0);
-  test.add(-1, DateTime::Millisecond);              // rollback
+  test.add(-1, DateTime::Millisecond);               // rollback
   testDateTime(test, 1999, 2, 28, 23, 59, 59, 999);
 
-  test = DateTime(1996, 2, 28, 23, 59, 59, 999);    // Leap year divisible by 4
-  test.add(1, DateTime::Millisecond);               // rollover 28 -> 29
+  test = DateTime(1996, 2, 28, 23, 59, 59, 999);     // Leap year (divisible by 4)
+  test.add(1, DateTime::Millisecond);                // rollover 28 -> 29
   testDateTime(test, 1996, 2, 29, 0, 0, 0, 0);
   test = DateTime(1996, 2, 29, 23, 59, 59, 999);
-  test.add(1, DateTime::Millisecond);               // rollover 29 -> 1
+  test.add(1, DateTime::Millisecond);                // rollover 29 -> 1
   testDateTime(test, 1996, 3, 1, 0, 0, 0, 0);
   test.add(-1, DateTime::Millisecond);               // rollback 1 -> 29
   testDateTime(test, 1996, 2, 29, 23, 59, 59, 999);
 
-  test = DateTime(1900, 2, 28, 23, 59, 59, 999);    // Not a leap year divisible by 100
-  test.add(1, DateTime::Millisecond);               // rollover
+  test = DateTime(1900, 2, 28, 23, 59, 59, 999);     // Not a leap year (divisible by 100)
+  test.add(1, DateTime::Millisecond);                // rollover
   testDateTime(test, 1900, 3, 1, 0, 0, 0, 0);
-  test.add(-1, DateTime::Millisecond);              // rollback
+  test.add(-1, DateTime::Millisecond);               // rollback
   testDateTime(test, 1900, 2, 28, 23, 59, 59, 999);
 
-  test = DateTime(2000, 2, 28, 23, 59, 59, 999);    // Leap year divisible by 400
-  test.add(1, DateTime::Millisecond);               // rollover 28 -> 29
+  test = DateTime(2000, 2, 28, 23, 59, 59, 999);     // Leap year (divisible by 400)
+  test.add(1, DateTime::Millisecond);                // rollover 28 -> 29
   testDateTime(test, 2000, 2, 29, 0, 0, 0, 0);
   test = DateTime(2000, 2, 29, 23, 59, 59, 999);
-  test.add(1, DateTime::Millisecond);               // rollover 29 -> 1
+  test.add(1, DateTime::Millisecond);                // rollover 29 -> 1
   testDateTime(test, 2000, 3, 1, 0, 0, 0, 0);
   test.add(-1, DateTime::Millisecond);               // rollback 1 -> 29
   testDateTime(test, 2000, 2, 29, 23, 59, 59, 999);
@@ -194,6 +194,15 @@ void testDateTime(DateTime test, int year, int month, int day, int hour, int min
   if (fail) fails++;
   tests++;
   Serial.println(test.toString());
+}
+
+void testDayOfWeek(DateTime test, DateTime::DayOfWeek day) {
+  tests++;
+  if (test.dayOfWeek() != day) {
+    fails++;
+    Serial.print("Day of week failed. Expected ");
+    Serial.print("a");
+  }
 }
 
 boolean compare(int expected, int actual, String description) {

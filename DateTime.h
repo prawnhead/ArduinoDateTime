@@ -2,6 +2,7 @@
 #define DateTime_h
 
 #include "Arduino.h"
+#include <avr/pgmspace.h>
 
 class DateTime
 {
@@ -53,6 +54,7 @@ class DateTime
     boolean operator >= (const DateTime &other) const;
     
     String& toString();
+//    String& dayOfWeekToString();
 };
 
 #endif
