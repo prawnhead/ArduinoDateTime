@@ -99,7 +99,7 @@ void DateTime::print() const {
   if (millisecond() < 10) Serial.print('0');
   Serial.print(millisecond());
   Serial.print(' ');
-  printDayOfWeek();
+//  printDayOfWeek();
 }
 
 void DateTime::add(int interval, Period period) {
@@ -324,7 +324,7 @@ DateTime::DayOfWeek DateTime::dayOfWeek() const {
   int yearOverFour = twoDigitYear/4;
   int month = this->isLeapYear() ? monthFactorsLeap[this->month() - 1] : monthFactors[this->month() - 1];
   int sum = century + twoDigitYear + yearOverFour + month + this->day();
-  return (DateTime::DayOfWeek)(sum % 7);
+  return (DateTime::DayOfWeek)(sum % 7 + 1);
 }
 
 boolean DateTime::isApproximatelyEqualTo(const DateTime &other) const {
@@ -364,44 +364,18 @@ unsigned long DateTime::totalMilliseconds() const {
   return result;
 }
 
-void DateTime::printDayOfWeek() const {
-  switch (this->dayOfWeek())
-  {
-    case DateTime::Sunday:
-      Serial.print("Sunday");
-      break;
-    case DateTime::Monday:
-      Serial.print("Monday");
-      break;
-    case DateTime::Tuesday:
-      Serial.print("Tuesday");
-      break;
-    case DateTime::Wednesday:
-      Serial.print("Wednesday");
-      break;
-    case DateTime::Thursday:
-      Serial.print("Thursday");
-      break;
-    case DateTime::Friday:
-      Serial.print("Friday");
-      break;
-    case DateTime::Saturday:
-      Serial.print("Saturday");
-      break;
-  }
-}
-
 String& DateTime::toString() {
   //http://arduino.cc/en/Reference/StringObject
   static String* output;
   if (output) delete(output);
   output = new String();
+  *output += dayOfWeekToShortString();
+  *output += ' ';
   if (_day < 10) *output += '0';
   *output += _day;
-  *output += '/';
-  if (_month < 10) *output += '0';
-  *output += _month;
-  *output += '/';
+  *output += ' ';
+  *output += monthToShortString();
+  *output += ' ';
   *output += _year;
   *output += ' ';
   if (_hour < 10) *output += '0';
@@ -416,5 +390,45 @@ String& DateTime::toString() {
   if (_millisecond < 100) *output += '0';
   if (_millisecond < 10) *output += '0';
   *output += _millisecond;
+  return *output;
+}
+
+String& DateTime::monthToString() {
+  char buffer[10];
+  char* month = (char*)(monthNames + monthNameIndex[_month]);
+  strcpy_P(buffer, month);
+  static String* output;
+  delete(output);
+  output = new String(buffer);
+  return *output;
+}
+
+String& DateTime::monthToShortString() {
+  char buffer[10];
+  char* month = (char*)(monthNamesShort + (_month * 4));
+  strcpy_P(buffer, month);
+  static String* output;
+  delete(output);
+  output = new String(buffer);
+  return *output;
+}
+
+String& DateTime::dayOfWeekToString() {
+  char buffer[10];
+  char* day = (char*)(weekdayNames + weekdayNameIndex[dayOfWeek()]);
+  strcpy_P(buffer, day);
+  static String* output;
+  delete(output);
+  output = new String(buffer);
+  return *output;
+}
+
+String& DateTime::dayOfWeekToShortString() {
+  char buffer[10];
+  char* day = (char*)(weekdayNamesShort + (dayOfWeek() * 4));
+  strcpy_P(buffer, day);
+  static String* output;
+  delete(output);
+  output = new String(buffer);
   return *output;
 }

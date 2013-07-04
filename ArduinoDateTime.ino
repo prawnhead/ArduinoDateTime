@@ -9,6 +9,16 @@ void setup() {
   Serial.println("Test create any DateTime");
   DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
   testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
+  
+  for (int i = 0; i < 12; i++) {
+    Serial.print(test.month());
+    Serial.print(" ");
+    Serial.print(test.monthToShortString());
+    Serial.print(" ");
+    Serial.println(test.dayOfWeekToShortString());
+    test.add(1, DateTime::Month);
+  }
+  return;
 
   Serial.println("Test add every interval");
   test.add(1, DateTime::Millisecond);
