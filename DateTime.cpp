@@ -77,31 +77,6 @@ int DateTime::minuteUnits() const {
   return _minute%10;
 }
 
-void DateTime::print() const {
-  Serial.print(year());
-  Serial.print('-');
-  if (month() < 10) Serial.print('0');
-  Serial.print(month());
-  Serial.print('-');
-  if (day() < 10) Serial.print('0');
-  Serial.print(day());
-  Serial.print(' ');
-  if (hour() < 10) Serial.print('0');
-  Serial.print(hour());
-  Serial.print(':');
-  if (minute() < 10) Serial.print('0');
-  Serial.print(minute());
-  Serial.print(':');
-  if (second() < 10) Serial.print('0');
-  Serial.print(second());
-  Serial.print('.');
-  if (millisecond() < 100) Serial.print('0');
-  if (millisecond() < 10) Serial.print('0');
-  Serial.print(millisecond());
-  Serial.print(' ');
-//  printDayOfWeek();
-}
-
 void DateTime::add(int interval, Period period) {
   // Should accept a positive or negative interval for any period.
   if (period == Millisecond) {
@@ -394,41 +369,53 @@ String& DateTime::toString() {
 }
 
 String& DateTime::monthToString() {
-  char buffer[10];
-  char* month = (char*)(monthNames + monthNameIndex[_month]);
-  strcpy_P(buffer, month);
-  static String* output;
-  delete(output);
-  output = new String(buffer);
-  return *output;
+  return monthToString(_month);
+}
+
+// You would expect this method to be static, but this would cause
+// the String object created to be shared across all instances of
+// DateTime objects. It looks a little odd to call this 'static'
+// function on an object, but determines which object's static
+// String the value is attached to.
+String& DateTime::monthToString(int month) {
+  return getProgMemString(monthNames, monthNameIndex[month]);
 }
 
 String& DateTime::monthToShortString() {
-  char buffer[10];
-  char* month = (char*)(monthNamesShort + (_month * 4));
-  strcpy_P(buffer, month);
-  static String* output;
-  delete(output);
-  output = new String(buffer);
-  return *output;
+  return monthToShortString(_month);
+}
+
+// See note on DateTime::monthToString(int month)
+String& DateTime::monthToShortString(int month) {
+  return getProgMemString(monthNamesShort, (month * 4));
 }
 
 String& DateTime::dayOfWeekToString() {
-  char buffer[10];
-  char* day = (char*)(weekdayNames + weekdayNameIndex[dayOfWeek()]);
-  strcpy_P(buffer, day);
-  static String* output;
-  delete(output);
-  output = new String(buffer);
-  return *output;
+  return dayOfWeekToString(dayOfWeek());
+}
+
+// See note on DateTime::monthToString(int month)
+String& DateTime::dayOfWeekToString(DayOfWeek day) {
+  return getProgMemString(dayNames, dayNameIndex[day]);
 }
 
 String& DateTime::dayOfWeekToShortString() {
-  char buffer[10];
-  char* day = (char*)(weekdayNamesShort + (dayOfWeek() * 4));
-  strcpy_P(buffer, day);
+  return dayOfWeekToShortString(dayOfWeek());
+}
+
+// See note on DateTime::monthToString(int month)
+String& DateTime::dayOfWeekToShortString(DayOfWeek day) {
+  return getProgMemString(dayNamesShort, (day * 4));
+}
+
+String& DateTime::getProgMemString(const char *progArray, byte index) {
+  // This function would be far simpler if the String() constructor
+  // could accept a pointer to program memory!
+  char ramBuffer[10];
+  char* progMemCString = (char*)(progArray + (index));
+  strcpy_P(ramBuffer, progMemCString);
   static String* output;
   delete(output);
-  output = new String(buffer);
+  output = new String(ramBuffer);
   return *output;
 }

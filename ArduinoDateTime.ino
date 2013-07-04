@@ -3,24 +3,39 @@
 int tests = 0;
 int fails = 0;
 
+void testDayOfWeek(DateTime test, DateTime::DayOfWeek day) {
+  tests++;
+  if (test.dayOfWeek() != day) {
+    fails++;
+    Serial.print("Day of week failed. Expected: ");
+    Serial.print(test.dayOfWeekToString());
+    Serial.print(". Actual: ");
+    Serial.println(test.dayOfWeekToString(day));
+  } else {
+    Serial.println(test.dayOfWeekToString());
+  }
+}
+
+
 void setup() {
   Serial.begin(115200);
   Serial.println("This sketch tests the included DateTime class (Arduino library).");
-  Serial.println("Test create any DateTime");
+  Serial.println("\nTest create any DateTime\n");
   DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
   testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
   
-  for (int i = 0; i < 12; i++) {
-    Serial.print(test.month());
-    Serial.print(" ");
-    Serial.print(test.monthToShortString());
-    Serial.print(" ");
-    Serial.println(test.dayOfWeekToShortString());
-    test.add(1, DateTime::Month);
-  }
-  return;
+//  for (int i = 0; i < 12; i++) {
+//    Serial.print(test.month());
+//    Serial.print(" ");
+//    Serial.print(test.monthToShortString());
+//    Serial.print(" ");
+//    Serial.println(test.dayOfWeekToShortString());
+//    test.add(1, DateTime::Month);
+//  }
+//  return;
 
-  Serial.println("Test add every interval");
+  Serial.println(F("\nTest add every interval\n"));
+  
   test.add(1, DateTime::Millisecond);
   testDateTime(test, 2000, 1, 1, 1, 1, 1, 2);
   test.add(1, DateTime::Second);
@@ -36,7 +51,8 @@ void setup() {
   test.add(1, DateTime::Year);
   testDateTime(test, 2001, 2, 2, 2, 2, 2, 2);
 
-  Serial.println("Test interval rollovers");
+  Serial.println(F("\nTest interval rollovers\n"));
+  
   test = DateTime(2000, 1, 1, 0, 0, 0, 999);        // millisecond -> seconds
   test.add(1, DateTime::Millisecond);               // rollover
   testDateTime(test, 2000, 1, 1, 0, 0, 1, 0);
@@ -73,7 +89,7 @@ void setup() {
   test.add(-1, DateTime::Month);                    // rollback
   testDateTime(test, 2000, 12, 1, 0, 0, 0, 0);
 
-  Serial.println("Test month rollovers");           // Also tests cascades millis -> seconds -> minutes ...
+  Serial.println(F("\nTest month rollovers\n"));           // Also tests cascades millis -> seconds -> minutes ...
 
   test = DateTime(2000, 1, 31, 23, 59, 59, 999);    // January -> February
   test.add(1, DateTime::Millisecond);               // rollover
@@ -153,7 +169,7 @@ void setup() {
   test.add(-1, DateTime::Millisecond);               // rollback
   testDateTime(test, 2000, 12, 31, 23, 59, 59, 999);
 
-  Serial.println("Test leap years");
+  Serial.println(F("\nTest leap years\n"));
   
   test = DateTime(1999, 2, 28, 23, 59, 59, 999);     // Not a leap year
   test.add(1, DateTime::Millisecond);                // rollover
@@ -185,6 +201,52 @@ void setup() {
   test.add(-1, DateTime::Millisecond);               // rollback 1 -> 29
   testDateTime(test, 2000, 2, 29, 23, 59, 59, 999);
 
+  Serial.println(F("\nTest days of the week\n"));
+
+  test = DateTime(2013, 7, 1, 2, 3, 4, 567);
+  testDayOfWeek(test, DateTime::Monday);
+  test.add(1, DateTime::Day);
+  testDayOfWeek(test, DateTime::Tuesday);
+  test.add(1, DateTime::Day);
+  testDayOfWeek(test, DateTime::Wednesday);
+  test.add(1, DateTime::Day);
+  testDayOfWeek(test, DateTime::Thursday);
+  test.add(1, DateTime::Day);
+  testDayOfWeek(test, DateTime::Friday);
+  test.add(1, DateTime::Day);
+  testDayOfWeek(test, DateTime::Saturday);
+  test.add(1, DateTime::Day);
+  testDayOfWeek(test, DateTime::Sunday);
+  test.add(1, DateTime::Day);
+  
+  Serial.println(F("\nTest months\n"));
+
+  test = DateTime(2013, 1, 1, 2, 3, 4, 567);
+  testMonth(test, 1);
+  test.add(1, DateTime::Month);
+  testMonth(test, 2);
+  test.add(1, DateTime::Month);
+  testMonth(test, 3);
+  test.add(1, DateTime::Month);
+  testMonth(test, 4);
+  test.add(1, DateTime::Month);
+  testMonth(test, 5);
+  test.add(1, DateTime::Month);
+  testMonth(test, 6);
+  test.add(1, DateTime::Month);
+  testMonth(test, 7);
+  test.add(1, DateTime::Month);
+  testMonth(test, 8);
+  test.add(1, DateTime::Month);
+  testMonth(test, 9);
+  test.add(1, DateTime::Month);
+  testMonth(test, 10);
+  test.add(1, DateTime::Month);
+  testMonth(test, 11);
+  test.add(1, DateTime::Month);
+  testMonth(test, 12);
+  test.add(1, DateTime::Month);
+
   printTestResults();
 }
 
@@ -206,12 +268,16 @@ void testDateTime(DateTime test, int year, int month, int day, int hour, int min
   Serial.println(test.toString());
 }
 
-void testDayOfWeek(DateTime test, DateTime::DayOfWeek day) {
+void testMonth(DateTime test, byte month) {
   tests++;
-  if (test.dayOfWeek() != day) {
+  if (test.month() != month) {
     fails++;
-    Serial.print("Day of week failed. Expected ");
-    Serial.print("a");
+    Serial.print("Month failed. Expected: ");
+    Serial.print(test.monthToString());
+    Serial.print(". Actual: ");
+    Serial.println(test.monthToString(month));
+  } else {
+    Serial.println(test.monthToString());
   }
 }
 
@@ -227,6 +293,7 @@ boolean compare(int expected, int actual, String description) {
 }
 
 void printTestResults() {
+  Serial.println();
   Serial.print(tests);
   Serial.print(" test completed. ");
   Serial.print(fails);

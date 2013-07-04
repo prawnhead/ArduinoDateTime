@@ -4,12 +4,21 @@
 #include "Arduino.h"
 #include <avr/pgmspace.h>
 
+/*
+ * Notes:
+ * Each DateTime object can store ONLY ONE associated string. When now.monthToString() is called,
+ * the object now maintains a String containing the name of the current month. When dayOfWeekToString()
+ * is called, the same String object is reused and the string containing the month is deleted and now
+ * holds the name of the day of the week.
+ */
+
 const char monthNames[] PROGMEM = "Error\0January\0February\0March\0April\0May\0June\0July\0August\0September\0October\0November\0December";
 const byte monthNameIndex[] = {0, 6, 14, 23, 29, 35, 39, 44, 49, 56, 66, 74, 83};
 const char monthNamesShort[] PROGMEM = "Err\0Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
-const char weekdayNames[] PROGMEM = "Error\0Sunday\0Monday\0Tuesday\0Wednesday\0Thursday\0Friday\0Saturday";
-const byte weekdayNameIndex[] = {0, 6, 13, 20, 28, 38, 47, 54};
-const char weekdayNamesShort[] PROGMEM = "Err\0Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
+const char dayNames[] PROGMEM = "Error\0Sunday\0Monday\0Tuesday\0Wednesday\0Thursday\0Friday\0Saturday";
+const byte dayNameIndex[] = {0, 6, 13, 20, 28, 38, 47, 54};
+const char dayNamesShort[] PROGMEM = "Err\0Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
+
 class DateTime
 {
   private:
@@ -17,9 +26,11 @@ class DateTime
     int parse(char number);
     int parse(char* number, int characters);
 
+    String& getProgMemString(const char *progMemString, byte index);
+
   public:
     enum Period { Year, Month, Day, Hour, Minute, Second, Millisecond };
-    enum DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
+    enum DayOfWeek { Error, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
     DateTime();
     DateTime(char* date, char* time);
@@ -39,7 +50,6 @@ class DateTime
     int minuteUnits() const;
 
     void add(int interval, Period period);
-    void print() const;
     int daysInMonth();
     unsigned long totalMilliseconds() const;
     DateTime::DayOfWeek dayOfWeek() const;
@@ -60,9 +70,13 @@ class DateTime
     
     String& toString();
     String& monthToString();
+    String& monthToString(int month);
     String& monthToShortString();
+    String& monthToShortString(int month);
     String& dayOfWeekToString();
+    String& dayOfWeekToString(DayOfWeek day);
     String& dayOfWeekToShortString();
+    String& dayOfWeekToShortString(DayOfWeek day);
 };
 
 #endif
