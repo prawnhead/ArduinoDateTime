@@ -25,22 +25,16 @@ void debug(char* string) {
 void setup() {
   Serial.begin(115200);
   Serial.println(F("This sketch tests the included DateTime class (Arduino library)."));
-  Serial.println(F("\nTest create any DateTime\n"));
-//  debug(__DATE__);
-//  DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
-  DateTime test = DateTime(__DATE__, __TIME__, DateTime::Compiler);
-  Serial.print(test.toString());
-//  testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
-  return;
-//  for (int i = 0; i < 12; i++) {
-//    Serial.print(test.month());
-//    Serial.print(" ");
-//    Serial.print(test.monthToShortString());
-//    Serial.print(" ");
-//    Serial.println(test.dayOfWeekToShortString());
-//    test.add(1, DateTime::Month);
-//  }
-//  return;
+
+  Serial.println(F("\nTest create current DateTime\n"));
+
+  DateTime test = DateTime(__DATE__, __TIME__, DateTime::Compiler); // uses compiler's current date and time
+  Serial.println(test.toString());
+
+  Serial.println(F("\nTest create specific DateTime\n"));
+
+  test = DateTime(2000, 1, 1, 1, 1, 1, 1);
+  testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
 
   Serial.println(F("\nTest add every interval\n"));
   
