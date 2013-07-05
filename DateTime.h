@@ -31,9 +31,10 @@ class DateTime
   public:
     enum Period { Year, Month, Day, Hour, Minute, Second, Millisecond };
     enum DayOfWeek { Error, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
-
+    enum TimeSource { Compiler, NMEA };
+    
     DateTime();
-    DateTime(char* date, char* time);
+    DateTime(char* date, char* time, DateTime::TimeSource source);
     DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond);
 
     int year() const;
@@ -51,6 +52,7 @@ class DateTime
 
     void add(int interval, Period period);
     int daysInMonth();
+    byte monthFromString(char* string);
     unsigned long totalMilliseconds() const;
     DateTime::DayOfWeek dayOfWeek() const;
     DateTime toLocal();

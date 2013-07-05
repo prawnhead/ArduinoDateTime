@@ -23,14 +23,57 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
   _millisecond = millisecond;
 }
 
-DateTime::DateTime(char* date, char* time) {
-  _year = 2000 + parse(date + 4, 2);
-  _month = parse(date + 2, 2);
-  _day = parse(date, 2);
-  _hour = parse(time, 2);
-  _minute = parse(time + 2, 2);
-  _second = parse(time + 4, 2);
-  _millisecond = parse(time + 7, 3);
+DateTime::DateTime(char* date, char* time, DateTime::TimeSource source) {
+  switch (source) {
+    case Compiler:
+      _year = parse((date + 7), 4);
+      _month = monthFromString(date);
+      _day = parse((date + 4), 2);
+      _hour = parse(time, 2);
+      _minute = parse(time + 3, 2);
+      _second = parse(time + 6, 2);
+      _millisecond = 0;
+      break;
+    case NMEA:
+      _year = 2000 + parse(date + 4, 2);
+      _month = parse(date + 2, 2);
+      _day = parse(date, 2);
+      _hour = parse(time, 2);
+      _minute = parse(time + 2, 2);
+      _second = parse(time + 4, 2);
+      _millisecond = parse(time + 7, 3);
+      break;
+  }
+}
+
+byte DateTime::monthFromString(char* string) {
+  switch (*string) {
+    case 'A':
+      return (*(++string) == 'p') ? 4 : 8;
+      break;
+    case 'D':
+      return 12;
+      break;
+    case 'F':
+      return 2;
+      break;
+    case 'J':
+      return (*(++string) == 'a') ? 1 : ((*(++string) == 'l') ? 7 : 6); 
+      return 0;
+      break;
+    case 'M':
+      return (*(string + 2) == 'r') ? 3 : 5;
+      break;
+    case 'N':
+      return 11;
+      break;
+    case 'O':
+      return 10;
+      break;
+    case 'S':
+      return 9;
+      break;
+  }
 }
 
 int DateTime::year() const {
@@ -205,6 +248,7 @@ int DateTime::parse(char* number, int characters) {
 }
 
 int DateTime::parse(char number) {
+  if (number == ' ') number = '0';
   return number - 48;
 }
 

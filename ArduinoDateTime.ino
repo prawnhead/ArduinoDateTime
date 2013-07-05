@@ -7,23 +7,31 @@ void testDayOfWeek(DateTime test, DateTime::DayOfWeek day) {
   tests++;
   if (test.dayOfWeek() != day) {
     fails++;
-    Serial.print("Day of week failed. Expected: ");
+    Serial.print(F("Day of week failed. Expected: "));
     Serial.print(test.dayOfWeekToString());
-    Serial.print(". Actual: ");
+    Serial.print(F(". Actual: "));
     Serial.println(test.dayOfWeekToString(day));
   } else {
     Serial.println(test.dayOfWeekToString());
   }
 }
 
+void debug(char* string) {
+  while (*string) {
+    Serial.println(*(string++), DEC);
+  }
+}
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("This sketch tests the included DateTime class (Arduino library).");
-  Serial.println("\nTest create any DateTime\n");
-  DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
-  testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
-  
+  Serial.println(F("This sketch tests the included DateTime class (Arduino library)."));
+  Serial.println(F("\nTest create any DateTime\n"));
+//  debug(__DATE__);
+//  DateTime test = DateTime(2000, 1, 1, 1, 1, 1, 1);
+  DateTime test = DateTime(__DATE__, __TIME__, DateTime::Compiler);
+  Serial.print(test.toString());
+//  testDateTime(test, 2000, 1, 1, 1, 1, 1, 1);
+  return;
 //  for (int i = 0; i < 12; i++) {
 //    Serial.print(test.month());
 //    Serial.print(" ");
