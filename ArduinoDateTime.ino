@@ -1,11 +1,17 @@
 #include "DateTime.h"
 
+void testDateTime();
+
 void setup() {
+
+  Serial.begin(115200);
+  delay(1000);
+  testDateTime();
+  delay(1000);
 
 }
 
 void loop() {
-
 }
 
 // int tests = 0;

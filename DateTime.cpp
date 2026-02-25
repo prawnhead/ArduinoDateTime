@@ -13,15 +13,15 @@ DateTime::DateTime() {
   _millisecond = 0;
 }
 
-// DateTime::DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond) {
-//   _year = year;
-//   _month = month;
-//   _day = day;
-//   _hour = hour;
-//   _minute = minute;
-//   _second = second;
-//   _millisecond = millisecond;
-// }
+DateTime::DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond) {
+  _year = year;
+  _month = month;
+  _day = day;
+  _hour = hour;
+  _minute = minute;
+  _second = second;
+  _millisecond = millisecond;
+}
 
 // DateTime::DateTime(char* date, char* time, TimeSource source) {
 //   switch (source) {
@@ -107,6 +107,21 @@ int DateTime::millisecond() const {
   return _millisecond;
 }
 
+void DateTime::dayName(Day day, String &name) {
+  name = String((const char *) &dayNames[dayNameIndex[(int)day]]);
+}
+
+void DateTime::dayNameShort(Day day, String &name) {
+  name = String((const char *) &dayNames[dayNameIndex[(int)day]], 3);
+}
+
+void DateTime::monthName(Month month, String &name) {
+  name = String((const char *) &monthNames[monthNameIndex[(int)month]]);
+}
+
+void DateTime::monthNameShort(Month month, String &name) {
+  name = String((const char *) &monthNames[monthNameIndex[(int)month]], 3);
+}
 // int DateTime::hourTens() const {
 //   return _hour/10;
 // }
