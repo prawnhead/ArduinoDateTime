@@ -1,9 +1,8 @@
 #include "DateTime.h"
 // #include "Arduino.h"
 
-// DateTime origin();
-
 // TODO: Need to handle FirstDayOfWeek Sunday|Monday
+// TODO: Need to enable usage as intstant (valid year, month, day, etc) and period (any number of years, months, days, etc.) for addition/subtraction etc.
 
 DateTime::DateTime() {
   _year = 2000;
@@ -114,7 +113,7 @@ void DateTime::dayName(Day day, String &name) {
 }
 
 void DateTime::dayNameShort(Day day, String &name) {
-  name = String((const char *) &dayNames[dayNameIndex[(int)day]], 3);
+  name = String((const char *) &dayNames[dayNameIndex[(int)day]], 3); // Requires ESP32
 }
 
 void DateTime::monthName(Month month, String &name) {
@@ -122,8 +121,25 @@ void DateTime::monthName(Month month, String &name) {
 }
 
 void DateTime::monthNameShort(Month month, String &name) {
-  name = String((const char *) &monthNames[monthNameIndex[(int)month]], 3);
+  name = String((const char *) &monthNames[monthNameIndex[(int)month]], 3); // Requires ESP32
 }
+
+bool DateTime::isLeapYear(int year) {
+  //http://en.wikipedia.org/wiki/Leap_year
+  // Year divisble by 400: leap year, or
+  // Year divisible by 4 and NOT divisible by 100: leap year
+  // Note: for year = 400, (year % 400) = 0, False. !(year % 400) = 1, True.
+  return (!(year % 4) && (year % 100)) || !(year % 400);
+}
+
+void DateTime::tick() {
+
+  unsigned long nowMillis = millis();
+  unsigned long delta = nowMillis - lastMillis;
+  // this->add(Period::Millisecond, delta);  // TODO: create function
+  lastMillis = nowMillis;
+}
+
 // int DateTime::hourTens() const {
 //   return _hour/10;
 // }
