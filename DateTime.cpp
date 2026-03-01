@@ -52,28 +52,44 @@ int DateTime::millisecond() const {
   return _millisecond;
 }
 
+DateTime::DayOfWeek DateTime::toDayOfWeek(int dayOfWeek) {
+  // Any integer is a valid day of the week
+  // 1 to 7: Sun-Sat, 8 to 14: Sun-Sat, -6 to 0: Sun-Sat
+  if ((dayOfWeek %= 7) < 1) dayOfWeek += 7;
+  return (DayOfWeek)dayOfWeek;
+}
+
 String DateTime::dayOfWeekName(DayOfWeek dayOfWeek) {
   // Requires ESP32
   return String((const char *)&dayOfWeekNames[dayOfWeekNameIndex[(int)dayOfWeek]]);
+}
+
+String DateTime::dayOfWeekName(int dayOfWeek) {
+  return dayOfWeekName(toDayOfWeek(dayOfWeek));
 }
 
 String DateTime::dayOfWeekNameShort(DayOfWeek dayOfWeek) {
   return String((const char *)&dayOfWeekNames[dayOfWeekNameIndex[(int)dayOfWeek]], 3);
 }
 
+String DateTime::dayOfWeekNameShort(int dayOfWeek) {
+  return dayOfWeekNameShort(toDayOfWeek(dayOfWeek));
+}
+
 String DateTime::monthName(Month month) {
   return String((const char *)&monthNames[monthNameIndex[(int)month]]);
+}
+
+String DateTime::monthName(int month) {
+  return monthName(toMonth(month));
 }
 
 String DateTime::monthNameShort(Month month) {
   return String((const char *)&monthNames[monthNameIndex[(int)month]], 3);
 }
 
-DateTime::DayOfWeek DateTime::toDayOfWeek(int dayOfWeek) {
-  // Any integer is a valid day of the week
-  // 1 to 7: Sun-Sat, 8 to 14: Sun-Sat, -6 to 0: Sun-Sat
-  if ((dayOfWeek %= 7) < 1) dayOfWeek += 7;
-  return (DayOfWeek)dayOfWeek;
+String DateTime::monthNameShort(int month) {
+  return monthNameShort(toMonth(month));
 }
 
 DateTime::Month DateTime::toMonth(int month) {

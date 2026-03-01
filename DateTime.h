@@ -71,14 +71,16 @@ public:
   int second() const;
   int millisecond() const;
 
-  static String dayName(int day);
   static String dayOfWeekName(DayOfWeek dayOfWeek); // Test: testDayName()
+  static String dayOfWeekName(int dayOfWeek);
   static String dayOfWeekNameShort(DayOfWeek dayOfWeek); // Test: testDayName()
-  static DayOfWeek toDayOfWeek(int dayOfWeek);
+  static String dayOfWeekNameShort(int dayOfWeek);
+  static DayOfWeek toDayOfWeek(int dayOfWeek);  // Test: testToDayOfWeek()
 
-  static String monthName(int month);
   static String monthName(Month month); // Test: testMonthName()
+  static String monthName(int month);
   static String monthNameShort(Month month); // Test: testMonthName()
+  static String monthNameShort(int month);
   static Month toMonth(int month);  // Test: testToMonth()
 
   static bool isLeapYear(int year); // Test: testIsLeapYear()
