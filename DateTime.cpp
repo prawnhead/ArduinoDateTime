@@ -62,7 +62,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
 //       return 2;
 //       break;
 //     case 'J':
-//       return (*(++string) == 'a') ? 1 : ((*(++string) == 'l') ? 7 : 6); 
+//       return (*(++string) == 'a') ? 1 : ((*(++string) == 'l') ? 7 : 6);
 //       return 0;
 //       break;
 //     case 'M':
@@ -109,19 +109,26 @@ int DateTime::millisecond() const {
 }
 
 void DateTime::dayName(Day day, String &name) {
-  name = String((const char *) &dayNames[dayNameIndex[(int)day]]);
+  name = String((const char *)&dayNames[dayNameIndex[(int)day]]);
 }
 
 void DateTime::dayNameShort(Day day, String &name) {
-  name = String((const char *) &dayNames[dayNameIndex[(int)day]], 3); // Requires ESP32
+  name = String((const char *)&dayNames[dayNameIndex[(int)day]], 3);  // Requires ESP32
 }
 
 void DateTime::monthName(Month month, String &name) {
-  name = String((const char *) &monthNames[monthNameIndex[(int)month]]);
+  name = String((const char *)&monthNames[monthNameIndex[(int)month]]);
 }
 
 void DateTime::monthNameShort(Month month, String &name) {
-  name = String((const char *) &monthNames[monthNameIndex[(int)month]], 3); // Requires ESP32
+  name = String((const char *)&monthNames[monthNameIndex[(int)month]], 3);  // Requires ESP32
+}
+
+DateTime::Month DateTime::toMonth(int month) {
+  // Any integer month is valid.
+  // 1 to 12: Jan-Dec. 13 to 24: Jan-Dec. -11 to 0: Jan-Dec, etc.
+  if ((month %= 12) < 1) month += 12;  // Result is -11 to 11.
+  return (Month)month;
 }
 
 bool DateTime::isLeapYear(int year) {
@@ -130,6 +137,27 @@ bool DateTime::isLeapYear(int year) {
   // Year divisible by 4 and NOT divisible by 100: leap year
   // Note: for year = 400, (year % 400) = 0, False. !(year % 400) = 1, True.
   return (!(year % 4) && (year % 100)) || !(year % 400);
+}
+
+int DateTime::daysInMonth(Month month, int year) {
+
+  switch (month) {
+    case Month::January:
+    case Month::March:
+    case Month::May:
+    case Month::July:
+    case Month::August:
+    case Month::October:
+    case Month::December:
+      return 31;
+    case Month::April:
+    case Month::June:
+    case Month::September:
+    case Month::November:
+      return 30;
+    default:
+      return (isLeapYear(year) ? 29 : 28);
+  }
 }
 
 void DateTime::tick() {

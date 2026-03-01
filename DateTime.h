@@ -31,7 +31,7 @@ private:
   int _year, _month, _day, _hour, _minute, _second, _millisecond;
   dstCallbackFunction dstDate;
   unsigned long lastMillis;
-  
+
   // int parse(char number);
   // int parse(char* number, int characters);
 
@@ -92,7 +92,9 @@ public:
   static void monthName(int dayOfMonth, String &name);
   static void monthName(Month month, String &name);
   static void monthNameShort(Month month, String &name);
+  static Month toMonth(int month);
   static bool isLeapYear(int year);
+  static int daysInMonth(Month month, int year);
 
   /* The logic to calculate dates and times for daylight savings time varies by country/state/province/region and is beyond the scope of this class. We'll achieve that functionality by allowing the user to write their own functions and register these as callback functions. It is intended they will only need to be called if the year changes. On each setting of the year, DateTime will compare the current to previous year and, when different, call both DST functions. eg:
   DateTime dstForward(int year);
@@ -111,7 +113,6 @@ public:
   // int minuteUnits() const;
 
   // void add(int interval, Period period);
-  // int daysInMonth();
   // byte monthFromString(char* string);
   // unsigned long totalMilliseconds() const;
   // DateTime::DayOfWeek dayOfWeek() const;

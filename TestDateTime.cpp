@@ -5,65 +5,141 @@ int tests, fails;
 String True = "True";
 String False = "False";
 
-void testIsLeapYear(int year, bool expected) {
+// Test DST callback function
+// std::function<DateTime(int, bool)>
+DateTime aedst(int year, bool forward) {
+  if (forward) {
+    return DateTime(2001, 1, 1, 1, 1, 1, 1);
+  } else {
+    return DateTime(2002, 2, 2, 2, 2, 2, 2);
+  }
+}
 
-  Serial.print("    test isLeapYear(");
+void reset() {
+  tests = 0;
+  fails = 0;
+}
+
+void testToMonth(int month, DateTime::Month expectedMonth) {
+
+  String expectedMonthName = String();
+  DateTime::monthName(expectedMonth, expectedMonthName);
+  Serial.print("      test toMonth(");
+  Serial.print(expectedMonthName);
+  Serial.println(")");
+
+  tests++;
+  DateTime::Month actualMonth = DateTime::toMonth(month);
+
+  if (actualMonth != expectedMonth) {
+    fails++;
+    String actualMonthName = String();
+    DateTime::monthName(actualMonth, actualMonthName);
+    Serial.print("FAIL! Expected: ");
+    Serial.print(expectedMonthName);
+    Serial.print(", returned: ");
+    Serial.println(actualMonthName);
+  }
+}
+
+void testIsLeapYear(int year, bool expectedLeapYear) {
+
+  Serial.print("      test isLeapYear(");
   Serial.print(year);
   Serial.println(")");
 
   tests++;
-  bool leapYear = DateTime::isLeapYear(year);
+  bool actualLeapYear = DateTime::isLeapYear(year);
 
-  if (expected != leapYear) {
+  if (expectedLeapYear != actualLeapYear) {
     fails++;
     Serial.print("FAIL! Expected: ");
-    Serial.print((expected) ? True : False);
+    Serial.print((expectedLeapYear) ? True : False);
     Serial.print(", returned: ");
-    Serial.println((leapYear) ? True : False);
+    Serial.println((actualLeapYear) ? True : False);
   }
 }
 
 void testDayName(DateTime::Day day, String expectedDayName, bool shortName) {
 
-  Serial.print("    test dayName");
-  (shortName) ? Serial.print("Short("): Serial.print("(");
+  Serial.print("      test dayName");
+  (shortName) ? Serial.print("Short(") : Serial.print("(");
   Serial.print((int)day);
   Serial.println(")");
-  
+
   tests++;
-  String name = String();
-  (shortName) ? DateTime::dayNameShort(day, name) : DateTime::dayName(day, name);
-  if (name != expectedDayName) {
+  String actualDayName = String();
+  (shortName) ? DateTime::dayNameShort(day, actualDayName) : DateTime::dayName(day, actualDayName);
+  if (actualDayName != expectedDayName) {
     fails++;
     Serial.print("FAIL! Expected: ");
     Serial.print(expectedDayName);
     Serial.print(", returned: ");
-    Serial.println(name);
+    Serial.println(actualDayName);
   }
 }
 
 void testMonthName(DateTime::Month month, String expectedMonthName, bool shortName) {
 
-  Serial.print("    test monthName");
-  (shortName) ? Serial.print("Short("): Serial.print("(");
+  Serial.print("      test monthName");
+  (shortName) ? Serial.print("Short(") : Serial.print("(");
   Serial.print(expectedMonthName);
   Serial.println(")");
-  
+
   tests++;
-  String name = String();
-  (shortName) ? DateTime::monthNameShort(month, name) : DateTime::monthName(month, name);
-  if (name != expectedMonthName) {
+  String actualMonthName = String();
+  (shortName) ? DateTime::monthNameShort(month, actualMonthName) : DateTime::monthName(month, actualMonthName);
+  if (actualMonthName != expectedMonthName) {
     fails++;
     Serial.print("FAIL! Expected: ");
     Serial.print(expectedMonthName);
     Serial.print(", returned ");
-    Serial.println(name);
+    Serial.println(actualMonthName);
+  }
+}
+
+void testDaysInMonth(DateTime::Month month, int year, int expectedDays) {
+
+  String monthName = String();
+  DateTime::monthName(month, monthName);
+  Serial.print("      test daysInMonth(");
+  Serial.print(monthName);
+  Serial.print(", ");
+  Serial.print(year);
+  Serial.println(")");
+
+  tests++;
+  int actualDays = DateTime::daysInMonth(month, year);
+  if (actualDays != expectedDays) {
+    fails++;
+    Serial.print("FAIL! Expected: ");
+    Serial.print(expectedDays);
+    Serial.print(", returned ");
+    Serial.println(actualDays);
   }
 }
 
 void testDateTime() {
-  
-  Serial.println("    Testing ...");
+
+  Serial.println("Verify all tests can fail ...");
+  testDayName(DateTime::Day::Error, "None", false);
+  testDayName(DateTime::Day::Error, "Non", true);
+  testMonthName(DateTime::Month::Error, "None", false);
+  testMonthName(DateTime::Month::Error, "Non", true);
+  testIsLeapYear(2000, false);
+  testToMonth(1, DateTime::Month::February);
+  testDaysInMonth(DateTime::Month::February, 2000, 31);
+
+  Serial.println();
+  Serial.print(tests);
+  Serial.print(" test completed. ");
+  Serial.print(fails);
+  Serial.print(" failures. ");
+  Serial.print((tests - fails) / (float)tests * 100);
+  Serial.println("% pass rate.\n");
+  reset();
+
+  Serial.println("TESTING ...");
   testDayName(DateTime::Day::Error, "Error", false);            // 1st enum
   testDayName(DateTime::Day::Sunday, "Sunday", false);          // 1st useful enum
   testDayName(DateTime::Day::Saturday, "Saturday", false);      // last enum
@@ -75,7 +151,7 @@ void testDateTime() {
   testMonthName(DateTime::Month::December, "December", false);  // last enum
   testMonthName(DateTime::Month::Error, "Err", true);           // 1st enum
   testMonthName(DateTime::Month::January, "Jan", true);         // 1st useful enum
-  testMonthName(DateTime::Month::December, "Dec", true);         // last enum
+  testMonthName(DateTime::Month::December, "Dec", true);        // last enum
 
   testIsLeapYear(2000, true);
   testIsLeapYear(2024, true);
@@ -83,13 +159,31 @@ void testDateTime() {
   testIsLeapYear(2023, false);
   testIsLeapYear(2100, false);
 
+  testToMonth(1, DateTime::Month::January);
+  testToMonth(12, DateTime::Month::December);
+  testToMonth(13, DateTime::Month::January);
+  testToMonth(24, DateTime::Month::December);
+  testToMonth(0, DateTime::Month::December);
+  testToMonth(-1, DateTime::Month::November);
+  testToMonth(-12, DateTime::Month::December);
+
+  testDaysInMonth(DateTime::Month::January, 2000, 31);
+  testDaysInMonth(DateTime::Month::July, 2000, 31);
+  testDaysInMonth(DateTime::Month::December, 2000, 31);
+  testDaysInMonth(DateTime::Month::April, 2000, 30);
+  testDaysInMonth(DateTime::Month::June, 2000, 30);
+  testDaysInMonth(DateTime::Month::November, 2000, 30);
+  testDaysInMonth(DateTime::Month::February, 2000, 29);
+  testDaysInMonth(DateTime::Month::February, 2001, 28);
+
   Serial.println();
   Serial.print(tests);
   Serial.print(" test completed. ");
   Serial.print(fails);
   Serial.print(" failures. ");
-  Serial.print((tests - fails)/(float) tests * 100);
+  Serial.print((tests - fails) / (float)tests * 100);
   Serial.println("% pass rate.");
+
   if (fails) Serial.println("\nFAIL!");
 }
 
