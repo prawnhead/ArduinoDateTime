@@ -22,8 +22,7 @@ void reset() {
 
 void testToMonth(int month, DateTime::Month expectedMonth) {
 
-  String expectedMonthName = String();
-  DateTime::monthName(expectedMonth, expectedMonthName);
+  String expectedMonthName = DateTime::monthName(expectedMonth);
   Serial.print("      test toMonth(");
   Serial.print(expectedMonthName);
   Serial.println(")");
@@ -33,8 +32,7 @@ void testToMonth(int month, DateTime::Month expectedMonth) {
 
   if (actualMonth != expectedMonth) {
     fails++;
-    String actualMonthName = String();
-    DateTime::monthName(actualMonth, actualMonthName);
+    String actualMonthName = DateTime::monthName(actualMonth);
     Serial.print("FAIL! Expected: ");
     Serial.print(expectedMonthName);
     Serial.print(", returned: ");
@@ -60,22 +58,21 @@ void testIsLeapYear(int year, bool expectedLeapYear) {
   }
 }
 
-void testDayName(DateTime::Day day, String expectedDayName, bool shortName) {
+void testDayOfWeekName(DateTime::DayOfWeek dayOfWeek, String expectedDayOfWeekName, bool shortName) {
 
-  Serial.print("      test dayName");
+  Serial.print("      test dayOfWeekName");
   (shortName) ? Serial.print("Short(") : Serial.print("(");
-  Serial.print((int)day);
+  Serial.print((int)dayOfWeek);
   Serial.println(")");
 
   tests++;
-  String actualDayName = String();
-  (shortName) ? DateTime::dayNameShort(day, actualDayName) : DateTime::dayName(day, actualDayName);
-  if (actualDayName != expectedDayName) {
+  String actualDayOfWeekName = (shortName) ? DateTime::dayOfWeekNameShort(dayOfWeek) : DateTime::dayOfWeekName(dayOfWeek);
+  if (actualDayOfWeekName != expectedDayOfWeekName) {
     fails++;
     Serial.print("FAIL! Expected: ");
-    Serial.print(expectedDayName);
+    Serial.print(expectedDayOfWeekName);
     Serial.print(", returned: ");
-    Serial.println(actualDayName);
+    Serial.println(actualDayOfWeekName);
   }
 }
 
@@ -87,8 +84,7 @@ void testMonthName(DateTime::Month month, String expectedMonthName, bool shortNa
   Serial.println(")");
 
   tests++;
-  String actualMonthName = String();
-  (shortName) ? DateTime::monthNameShort(month, actualMonthName) : DateTime::monthName(month, actualMonthName);
+  String actualMonthName = (shortName) ? DateTime::monthNameShort(month) : DateTime::monthName(month);
   if (actualMonthName != expectedMonthName) {
     fails++;
     Serial.print("FAIL! Expected: ");
@@ -100,8 +96,7 @@ void testMonthName(DateTime::Month month, String expectedMonthName, bool shortNa
 
 void testDaysInMonth(DateTime::Month month, int year, int expectedDays) {
 
-  String monthName = String();
-  DateTime::monthName(month, monthName);
+  String monthName = DateTime::monthName(month);
   Serial.print("      test daysInMonth(");
   Serial.print(monthName);
   Serial.print(", ");
@@ -122,8 +117,8 @@ void testDaysInMonth(DateTime::Month month, int year, int expectedDays) {
 void testDateTime() {
 
   Serial.println("Verify all tests can fail ...");
-  testDayName(DateTime::Day::Error, "None", false);
-  testDayName(DateTime::Day::Error, "Non", true);
+  testDayOfWeekName(DateTime::DayOfWeek::Error, "None", false);
+  testDayOfWeekName(DateTime::DayOfWeek::Error, "Non", true);
   testMonthName(DateTime::Month::Error, "None", false);
   testMonthName(DateTime::Month::Error, "Non", true);
   testIsLeapYear(2000, false);
@@ -140,12 +135,12 @@ void testDateTime() {
   reset();
 
   Serial.println("TESTING ...");
-  testDayName(DateTime::Day::Error, "Error", false);            // 1st enum
-  testDayName(DateTime::Day::Sunday, "Sunday", false);          // 1st useful enum
-  testDayName(DateTime::Day::Saturday, "Saturday", false);      // last enum
-  testDayName(DateTime::Day::Error, "Err", true);               // 1st enum
-  testDayName(DateTime::Day::Sunday, "Sun", true);              // 1st useful enum
-  testDayName(DateTime::Day::Saturday, "Sat", true);            // last enum
+  testDayOfWeekName(DateTime::DayOfWeek::Error, "Error", false);            // 1st enum
+  testDayOfWeekName(DateTime::DayOfWeek::Sunday, "Sunday", false);          // 1st useful enum
+  testDayOfWeekName(DateTime::DayOfWeek::Saturday, "Saturday", false);      // last enum
+  testDayOfWeekName(DateTime::DayOfWeek::Error, "Err", true);               // 1st enum
+  testDayOfWeekName(DateTime::DayOfWeek::Sunday, "Sun", true);              // 1st useful enum
+  testDayOfWeekName(DateTime::DayOfWeek::Saturday, "Sat", true);            // last enum
   testMonthName(DateTime::Month::Error, "Error", false);        // 1st enum
   testMonthName(DateTime::Month::January, "January", false);    // 1st useful enum
   testMonthName(DateTime::Month::December, "December", false);  // last enum

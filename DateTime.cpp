@@ -24,62 +24,6 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
   _millisecond = millisecond;
 }
 
-// DateTime::DateTime(char* date, char* time, TimeSource source) {
-//   switch (source) {
-//     case TimeSource::Compiler:
-//       _year = parse((date + 7), 4);
-//       _month = monthFromString(date);
-//       _day = parse((date + 4), 2);
-//       _hour = parse(time, 2);
-//       _minute = parse(time + 3, 2);
-//       _second = parse(time + 6, 2);
-//       _millisecond = 0;
-//       break;
-//     case TimeSource::NMEA:
-//       _year = 2000 + parse(date + 4, 2);
-//       _month = parse(date + 2, 2);
-//       _day = parse(date, 2);
-//       _hour = parse(time, 2);
-//       _minute = parse(time + 2, 2);
-//       _second = parse(time + 4, 2);
-//       _millisecond = parse(time + 7, 3);
-//       break;
-//     default:
-//       // TODO: Implement other TimeSources
-//       break;
-//   }
-// }
-
-// byte DateTime::monthFromString(char* string) {
-//   switch (*string) {
-//     case 'A':
-//       return (*(++string) == 'p') ? 4 : 8;
-//       break;
-//     case 'D':
-//       return 12;
-//       break;
-//     case 'F':
-//       return 2;
-//       break;
-//     case 'J':
-//       return (*(++string) == 'a') ? 1 : ((*(++string) == 'l') ? 7 : 6);
-//       return 0;
-//       break;
-//     case 'M':
-//       return (*(string + 2) == 'r') ? 3 : 5;
-//       break;
-//     case 'N':
-//       return 11;
-//       break;
-//     case 'O':
-//       return 10;
-//       break;
-//     case 'S':
-//       return 9;
-//       break;
-//   }
-// }
-
 int DateTime::year() const {
   return _year;
 }
@@ -108,26 +52,34 @@ int DateTime::millisecond() const {
   return _millisecond;
 }
 
-void DateTime::dayName(Day day, String &name) {
-  name = String((const char *)&dayNames[dayNameIndex[(int)day]]);
+String DateTime::dayOfWeekName(DayOfWeek dayOfWeek) {
+  // Requires ESP32
+  return String((const char *)&dayOfWeekNames[dayOfWeekNameIndex[(int)dayOfWeek]]);
 }
 
-void DateTime::dayNameShort(Day day, String &name) {
-  name = String((const char *)&dayNames[dayNameIndex[(int)day]], 3);  // Requires ESP32
+String DateTime::dayOfWeekNameShort(DayOfWeek dayOfWeek) {
+  return String((const char *)&dayOfWeekNames[dayOfWeekNameIndex[(int)dayOfWeek]], 3);
 }
 
-void DateTime::monthName(Month month, String &name) {
-  name = String((const char *)&monthNames[monthNameIndex[(int)month]]);
+String DateTime::monthName(Month month) {
+  return String((const char *)&monthNames[monthNameIndex[(int)month]]);
 }
 
-void DateTime::monthNameShort(Month month, String &name) {
-  name = String((const char *)&monthNames[monthNameIndex[(int)month]], 3);  // Requires ESP32
+String DateTime::monthNameShort(Month month) {
+  return String((const char *)&monthNames[monthNameIndex[(int)month]], 3);
+}
+
+DateTime::DayOfWeek DateTime::toDayOfWeek(int dayOfWeek) {
+  // Any integer is a valid day of the week
+  // 1 to 7: Sun-Sat, 8 to 14: Sun-Sat, -6 to 0: Sun-Sat
+  if ((dayOfWeek %= 7) < 1) dayOfWeek += 7;
+  return (DayOfWeek)dayOfWeek;
 }
 
 DateTime::Month DateTime::toMonth(int month) {
   // Any integer month is valid.
   // 1 to 12: Jan-Dec. 13 to 24: Jan-Dec. -11 to 0: Jan-Dec, etc.
-  if ((month %= 12) < 1) month += 12;  // Result is -11 to 11.
+  if ((month %= 12) < 1) month += 12;
   return (Month)month;
 }
 
@@ -533,3 +485,60 @@ void DateTime::tick() {
 //   output = new String(ramBuffer);
 //   return *output;
 // }
+
+// DateTime::DateTime(char* date, char* time, TimeSource source) {
+//   switch (source) {
+//     case TimeSource::Compiler:
+//       _year = parse((date + 7), 4);
+//       _month = monthFromString(date);
+//       _day = parse((date + 4), 2);
+//       _hour = parse(time, 2);
+//       _minute = parse(time + 3, 2);
+//       _second = parse(time + 6, 2);
+//       _millisecond = 0;
+//       break;
+//     case TimeSource::NMEA:
+//       _year = 2000 + parse(date + 4, 2);
+//       _month = parse(date + 2, 2);
+//       _day = parse(date, 2);
+//       _hour = parse(time, 2);
+//       _minute = parse(time + 2, 2);
+//       _second = parse(time + 4, 2);
+//       _millisecond = parse(time + 7, 3);
+//       break;
+//     default:
+//       // TODO: Implement other TimeSources
+//       break;
+//   }
+// }
+
+// byte DateTime::monthFromString(char* string) {
+//   switch (*string) {
+//     case 'A':
+//       return (*(++string) == 'p') ? 4 : 8;
+//       break;
+//     case 'D':
+//       return 12;
+//       break;
+//     case 'F':
+//       return 2;
+//       break;
+//     case 'J':
+//       return (*(++string) == 'a') ? 1 : ((*(++string) == 'l') ? 7 : 6);
+//       return 0;
+//       break;
+//     case 'M':
+//       return (*(string + 2) == 'r') ? 3 : 5;
+//       break;
+//     case 'N':
+//       return 11;
+//       break;
+//     case 'O':
+//       return 10;
+//       break;
+//     case 'S':
+//       return 9;
+//       break;
+//   }
+// }
+

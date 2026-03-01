@@ -6,20 +6,10 @@
 
 /*  TODO: Need to implement callback functions for dstStart() and dstEnd()
  */
-
-
-/* TODO: Edit
- * Notes:
- * Each DateTime object can store ONLY ONE associated string. When now.monthToString() is called,
- * the object now maintains a String containing the name of the current month. When dayOfWeekToString()
- * is called, the same String object is reused and the string containing the month is deleted and now
- * holds the name of the day of the week.
- */
-
+const char dayOfWeekNames[] = "Error\0Sunday\0Monday\0Tuesday\0Wednesday\0Thursday\0Friday\0Saturday";
+const byte dayOfWeekNameIndex[] = { 0, 6, 13, 20, 28, 38, 47, 54 };
 const char monthNames[] = "Error\0January\0February\0March\0April\0May\0June\0July\0August\0September\0October\0November\0December";
 const int monthNameIndex[] = { 0, 6, 14, 23, 29, 35, 39, 44, 49, 56, 66, 74, 83 };
-const char dayNames[] = "Error\0Sunday\0Monday\0Tuesday\0Wednesday\0Thursday\0Friday\0Saturday";
-const byte dayNameIndex[] = { 0, 6, 13, 20, 28, 38, 47, 54 };
 
 class DateTime {
 
@@ -32,11 +22,6 @@ private:
   dstCallbackFunction dstDate;
   unsigned long lastMillis;
 
-  // int parse(char number);
-  // int parse(char* number, int characters);
-
-  // String& getProgMemString(const char *progMemString, byte index);
-
 public:
   // C++11 Scoped Enums
   enum class Period { Year,
@@ -46,7 +31,7 @@ public:
                       Minute,
                       Second,
                       Millisecond };
-  enum class Day { Error,
+  enum class DayOfWeek { Error,
                    Sunday,
                    Monday,
                    Tuesday,
@@ -86,14 +71,17 @@ public:
   int second() const;
   int millisecond() const;
 
-  static void dayName(int dayOfWeek, String &name);
-  static void dayName(Day day, String &name);
-  static void dayNameShort(Day day, String &name);
-  static void monthName(int dayOfMonth, String &name);
-  static void monthName(Month month, String &name);
-  static void monthNameShort(Month month, String &name);
-  static Month toMonth(int month);
-  static bool isLeapYear(int year);
+  static String dayName(int day);
+  static String dayOfWeekName(DayOfWeek dayOfWeek); // Test: testDayName()
+  static String dayOfWeekNameShort(DayOfWeek dayOfWeek); // Test: testDayName()
+  static DayOfWeek toDayOfWeek(int dayOfWeek);
+
+  static String monthName(int month);
+  static String monthName(Month month); // Test: testMonthName()
+  static String monthNameShort(Month month); // Test: testMonthName()
+  static Month toMonth(int month);  // Test: testToMonth()
+
+  static bool isLeapYear(int year); // Test: testIsLeapYear()
   static int daysInMonth(Month month, int year);
 
   /* The logic to calculate dates and times for daylight savings time varies by country/state/province/region and is beyond the scope of this class. We'll achieve that functionality by allowing the user to write their own functions and register these as callback functions. It is intended they will only need to be called if the year changes. On each setting of the year, DateTime will compare the current to previous year and, when different, call both DST functions. eg:
@@ -107,6 +95,11 @@ public:
    */
   void tick();
 
+  // int parse(char number);
+  // int parse(char* number, int characters);
+
+  // String& getProgMemString(const char *progMemString, byte index);
+
   // int hourTens() const;
   // int hourUnits() const;
   // int minuteTens() const;
@@ -117,7 +110,6 @@ public:
   // unsigned long totalMilliseconds() const;
   // DateTime::DayOfWeek dayOfWeek() const;
   // DateTime toLocal();
-  // boolean isLeapYear() const;
   // boolean isApproximatelyEqualTo(const DateTime &other) const;
 
   // boolean isEarlierThan(const DateTime &other) const;
